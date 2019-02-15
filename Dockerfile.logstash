@@ -21,5 +21,3 @@ RUN sed -i 's/-Xms1g/-Xms4g/g' /usr/share/logstash/config/jvm.options \
 RUN sed -i "\$a\ " /usr/share/logstash/config/pipelines.yml 
 RUN sed -i "\$a- pipeline.id: elastiflow" /usr/share/logstash/config/pipelines.yml 
 RUN sed -i "\$a\ \ path.config: /usr/share/logstash/elastiflow/conf.d/*.conf" /usr/share/logstash/config/pipelines.yml
-
-# RUN curl -X POST  http://kibana:5601/api/kibana/dashboards/import -H "Content-Type: application/json" -H "kbn-xsrf: true" -d @/tmp/elastiflow-master/kibana/elastiflow.dashboards.6.4.x.json

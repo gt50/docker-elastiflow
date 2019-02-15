@@ -51,8 +51,14 @@ services:
       sh -c "apk update && apk add curl && 
       curl -L https://github.com/robcowart/elastiflow/archive/master.zip -o master.zip && 
       unzip master.zip && 
-      curl -X POST  http://kibana:5601/api/saved_objects/index-pattern/elastiflow-* -H "Content-Type:application/json" -H "kbn-xsrf:true" -d @/elastiflow-master/kibana/elastiflow.index_pattern.json"
-      #curl -X POST  http://kibana:5601/api/kibana/dashboards/import -H "Content-Type: application/json" -H "kbn-xsrf: true" -d @/elastiflow-master/kibana/elastiflow.dashboards.6.4.x.json
+      sed -i '1s/^/{  "objects":\ /' /elastiflow-master/kibana/elastiflow.dashboards.${ELASTIFLOW_DASHBOARD_VERSION}.json &&
+      sed -i 's/"_id"/"id"/g' /elastiflow-master/kibana/elastiflow.dashboards.${ELASTIFLOW_DASHBOARD_VERSION}.json &&
+      sed -i 's/"_type"/"type"/g' /elastiflow-master/kibana/elastiflow.dashboards.${ELASTIFLOW_DASHBOARD_VERSION}.json &&
+      sed -i 's/"_source"/"attributes"/g' /elastiflow-master/kibana/elastiflow.dashboards.${ELASTIFLOW_DASHBOARD_VERSION}.json &&
+      sed -i '$$ a }' /elastiflow-master/kibana/elastiflow.dashboards.${ELASTIFLOW_DASHBOARD_VERSION}.json &&
+      sleep 120 &&
+      curl -X POST  http://kibana:5601/api/saved_objects/index-pattern/elastiflow-* -H "Content-Type:application/json" -H "kbn-xsrf:true" -d @/elastiflow-master/kibana/elastiflow.index_pattern.json &&
+      curl -X POST  http://kibana:5601/api/kibana/dashboards/import -H "Content-Type:application/json" -H "kbn-xsrf:true" -d @/elastiflow-master/kibana/elastiflow.dashboards.${ELASTIFLOW_DASHBOARD_VERSION}.json"
     depends_on:
       - logstash
     networks:
